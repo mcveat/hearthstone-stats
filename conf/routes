@@ -6,6 +6,7 @@
 GET        /                    controllers.Application.index
 GET        /new                 controllers.Application.newStatsPage
 GET        /stats/:id           controllers.Application.stats(id: String)
+POST       /stats/:id/game      controllers.Application.recordGame(id: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file        controllers.Assets.at(path="/public", file)

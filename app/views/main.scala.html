@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 
-<html @if(useAngular) { ng-app }>
+<html>
     <head>
         <title>Hearthstone Stats</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +10,14 @@
 
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" data-noprefix>
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css" data-noprefix   >
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.min.css")">
 
         <script src="//cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
         @if(useAngular) {
+            <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
             <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+            <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular-resource.min.js"></script>
+            <script src="//cdn.jsdelivr.net/restangular/0.6.1/restangular.min.js"></script>
             <script src="@routes.Assets.at("javascripts/app.min.js")"></script>
         }
     </head>

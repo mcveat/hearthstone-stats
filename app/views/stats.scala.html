@@ -1,7 +1,7 @@
-@()
+@(id: String)
 
 @main(useAngular = true) {
-    <div ng-controller="MatchResultCtrl">
+    <div ng-app="hs-battle" ng-controller="MatchResultCtrl" ng-init="accountId='@id'">
         <div class="row well hero-chooser">
             <div class="col-sm-1 col-sm-offset-1 center-content">
                 <h2>YOU</h2>
@@ -14,9 +14,9 @@
                 <h4 class="hero-name">{{hero.name}}</h4>
             </div>
         </div>
-        <h3 class="center-content">
-            VS
-        </h3>
+
+        <h3 class="center-content">VS</h3>
+
         <div class="row well hero-chooser">
             <div class="col-sm-1 col-sm-offset-1 center-content">
                 <h2>OPP</h2>
@@ -27,6 +27,28 @@
                     <img src="{{hero.imgUrl}}" class="img-rounded"/>
                 </a>
                 <h4 class="hero-name">{{hero.name}}</h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-2 col-sm-offset-3 center-content">
+                <button class="btn btn-success btn-battle-result" ng-disabled="!readyToBattle()"
+                        ng-click="markBattleAsWon()">
+                    <span class="glyphicon glyphicon-thumbs-up">&nbsp;</span>
+                    I won
+                </button>
+            </div>
+            <div class="col-sm-2 center-content">
+                <button class="btn btn-battle-result" ng-disabled="!readyToBattle()" ng-click="markBattleAsDraw()">
+                    There was a draw
+                </button>
+            </div>
+            <div class="col-sm-2 center-content">
+                <button class="btn btn-danger btn-battle-result" ng-disabled="!readyToBattle()"
+                        ng-click="markBattleAsLost()">
+                    <span class="glyphicon glyphicon-thumbs-down">&nbsp;</span>
+                    I lost
+                </button>
             </div>
         </div>
     </div>

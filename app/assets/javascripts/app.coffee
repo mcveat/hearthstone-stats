@@ -1,6 +1,6 @@
-root = exports ? this
+battleModule = angular.module('hs-battle', ['restangular'])
 
-root.MatchResultCtrl = ($scope) ->
+battleModule.controller 'MatchResultCtrl', ($scope, Restangular) ->
   $scope.heroes = [
     {
       name : 'Druid'
@@ -32,5 +32,31 @@ root.MatchResultCtrl = ($scope) ->
     }
   ]
 
-  $scope.setPlayersHero = (hero) -> $scope.playersHero = hero
-  $scope.setOpponentsHero = (hero) -> $scope.opponentsHero = hero
+  $scope.setPlayersHero = (hero) ->
+    $scope.playersHero = hero
+  $scope.setOpponentsHero = (hero) ->
+    $scope.opponentsHero = hero
+  $scope.readyToBattle = -> $scope.playersHero? && $scope.opponentsHero?
+
+  $scope.markBattleAsWon = ->
+    if !$scope.readyToBattle() then return
+    postBattleResult('won')
+
+  $scope.markBattleAsDraw = ->
+    if !$scope.readyToBattle() then return
+    postBattleResult('draw')
+
+  $scope.markBattleAsLost = ->
+    if !$scope.readyToBattle() then return
+    postBattleResult('lost')
+
+  postBattleResult = (result) ->
+    battle =
+      player : $scope.playersHero.name
+      opponent : $scope.opponentsHero.name
+      result : result
+    Restangular.one('stats', $scope.accountId).post('game', battle).then(
+      (-> console.log 'success'),
+      (-> console.log 'failure')
+    )
+
