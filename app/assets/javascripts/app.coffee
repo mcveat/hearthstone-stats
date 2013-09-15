@@ -1,41 +1,15 @@
 battleModule = angular.module('hs-battle', ['restangular'])
 
 battleModule.controller 'MatchResultCtrl', ($scope, Restangular) ->
-  $scope.heroes = [
-    {
-      name : 'Druid'
-      imgUrl : '/assets/images/malfurion.jpg'
-    },{
-      name : 'Hunter'
-      imgUrl : '/assets/images/rexxar.jpg'
-    },{
-      name : 'Mage'
-      imgUrl : '/assets/images/jaina.jpg'
-    },{
-      name : 'Paladin'
-      imgUrl : '/assets/images/uther.jpg'
-    },{
-      name : 'Priest'
-      imgUrl : '/assets/images/anduin.jpg'
-    },{
-      name : 'Rogue'
-      imgUrl : '/assets/images/valeera.jpg'
-    },{
-      name : 'Shaman'
-      imgUrl : '/assets/images/thrall.jpg'
-    },{
-      name : 'Warlock'
-      imgUrl : '/assets/images/guldan.jpg'
-    },{
-      name : 'Warrior'
-      imgUrl : '/assets/images/garrosh.jpg'
-    }
-  ]
+  $scope.init = (id) ->
+    $scope.statsBase = Restangular.one('stats', id)
+    $scope.statsBase.all('games').getList().then (games) -> $scope.games = games
+    Restangular.all('heroes').getList().then (heroes) -> $scope.heroes = heroes
 
-  $scope.setPlayersHero = (hero) ->
-    $scope.playersHero = hero
-  $scope.setOpponentsHero = (hero) ->
-    $scope.opponentsHero = hero
+  $scope.alerts = []
+
+  $scope.setPlayersHero = (hero) -> $scope.playersHero = hero
+  $scope.setOpponentsHero = (hero) -> $scope.opponentsHero = hero
   $scope.readyToBattle = -> $scope.playersHero? && $scope.opponentsHero?
 
   $scope.markBattleAsWon = ->
@@ -50,13 +24,26 @@ battleModule.controller 'MatchResultCtrl', ($scope, Restangular) ->
     if !$scope.readyToBattle() then return
     postBattleResult('lost')
 
+  $scope.closeAlert = (index) -> $scope.alerts.splice(index, 1)
+
+  $scope.getHeroImageUrl = (name) ->
+    hero = _.find($scope.heroes, (h) -> h.name == name)
+    hero?.imageUrl
+
+  $scope.fromNow = (timestamp) -> moment(timestamp).fromNow()
+
+
   postBattleResult = (result) ->
     battle =
       player : $scope.playersHero.name
       opponent : $scope.opponentsHero.name
       result : result
-    Restangular.one('stats', $scope.accountId).post('game', battle).then(
-      (-> console.log 'success'),
-      (-> console.log 'failure')
+    $scope.statsBase.post('game', battle).then(
+      ( (game) ->
+        console.log $scope.games
+        $scope.games.unshift game ),
+      ( -> $scope.alerts.push
+          type: 'danger'
+          msg: 'Failed to submit game results. Try again?'
+      )
     )
-
