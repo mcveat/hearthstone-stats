@@ -3,6 +3,7 @@ app = angular.module('hs', ['restangular'])
 app.config ($routeProvider) ->
   $routeProvider
     .when('/game', { controller : 'MatchResultCtrl', templateUrl : 'game.html'})
+    .when('/stats', { controller : 'StatsCtrl', templateUrl : 'stats.html'})
     .when('/about', { templateUrl : 'about.html'} )
     .otherwise redirectTo : '/game'
 

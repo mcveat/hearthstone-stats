@@ -1,82 +1,80 @@
 @(id: String)
 
-@main(useAngular = true) {
-    <script type="text/ng-template" id="game.html">
-        <div ng-init="init('@id')">
-            <div class="row well hero-chooser">
-                <div class="col-sm-1 col-sm-offset-1 center-content">
-                    <h2>YOU</h2>
-                </div>
-                <div ng-repeat="hero in heroes" class="col-sm-1 center-content hero-box"
-                        ng-class="{'selected-hero' : hero == playersHero}" ng-click="setPlayersHero(hero)">
-                    <a class="thumbnail">
-                        <img src="{{hero.imageUrl}}" class="img-rounded"/>
-                    </a>
-                    <h4 class="hero-name">{{hero.name}}</h4>
-                </div>
+<script type="text/ng-template" id="game.html">
+    <div ng-init="init('@id')">
+        <div class="row well hero-chooser">
+            <div class="col-sm-1 col-sm-offset-1 center-content">
+                <h2>YOU</h2>
             </div>
-
-            <h3 class="center-content">VS</h3>
-
-            <div class="row well hero-chooser">
-                <div class="col-sm-1 col-sm-offset-1 center-content">
-                    <h2>OPP</h2>
-                </div>
-                <div ng-repeat="hero in heroes" class="col-sm-1 center-content hero-box"
-                ng-class="{'selected-hero' : hero == opponentsHero}" ng-click="setOpponentsHero(hero)">
-                    <a class="thumbnail">
-                        <img src="{{hero.imageUrl}}" class="img-rounded"/>
-                    </a>
-                    <h4 class="hero-name">{{hero.name}}</h4>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-2 col-sm-offset-3 center-content">
-                    <button class="btn btn-success btn-battle-result" ng-disabled="!readyToBattle()"
-                            ng-click="markBattleAsWon()">
-                        <span class="glyphicon glyphicon-thumbs-up">&nbsp;</span>
-                        I won
-                    </button>
-                </div>
-                <div class="col-sm-2 center-content">
-                    <button class="btn btn-battle-result" ng-disabled="!readyToBattle()" ng-click="markBattleAsDraw()">
-                        There was a draw
-                    </button>
-                </div>
-                <div class="col-sm-2 center-content">
-                    <button class="btn btn-danger btn-battle-result" ng-disabled="!readyToBattle()"
-                            ng-click="markBattleAsLost()">
-                        <span class="glyphicon glyphicon-thumbs-down">&nbsp;</span>
-                        I lost
-                    </button>
-                </div>
-            </div>
-
-            <div class="row alerts-row">
-                <div ng-repeat="alert in alerts" class="col-sm-6 col-sm-offset-3 alert alert-dismissable alert-{{alert.type}}">
-                    <button type="button" class="close" ng-click="closeAlert($index)">&times;</button>
-                    {{alert.msg}}
-                </div>
-            </div>
-
-            <h3 class="center-content">Recent games</h3>
-            <div class="row">
-                <div class="col-sm-4 col-sm-offset-4 well center-content" ng-repeat="game in games">
-                    <div class="thumbnail pull-left">
-                        <img src="{{getHeroImageUrl(game.player)}}"/>
-                    </div>
-                    <div class="thumbnail pull-right">
-                        <img src="{{getHeroImageUrl(game.opponent)}}"/>
-                    </div>
-                    <div ng-switch on="game.result" class="game-result-badge">
-                        <span class="label label-success" ng-switch-when="won">WIN</span>
-                        <span class="label label-danger" ng-switch-when="lost">LOST</span>
-                        <span class="label label-default" ng-switch-default>DRAW</span>
-                    </div>
-                    <div class="game-time">{{fromNow(game.at)}}</div>
-                </div>
+            <div ng-repeat="hero in heroes" class="col-sm-1 center-content hero-box"
+                    ng-class="{'selected-hero' : hero == playersHero}" ng-click="setPlayersHero(hero)">
+                <a class="thumbnail">
+                    <img src="{{hero.imageUrl}}" class="img-rounded"/>
+                </a>
+                <h4 class="hero-name">{{hero.name}}</h4>
             </div>
         </div>
-    </script>
-}
+
+        <h3 class="center-content">VS</h3>
+
+        <div class="row well hero-chooser">
+            <div class="col-sm-1 col-sm-offset-1 center-content">
+                <h2>OPP</h2>
+            </div>
+            <div ng-repeat="hero in heroes" class="col-sm-1 center-content hero-box"
+            ng-class="{'selected-hero' : hero == opponentsHero}" ng-click="setOpponentsHero(hero)">
+                <a class="thumbnail">
+                    <img src="{{hero.imageUrl}}" class="img-rounded"/>
+                </a>
+                <h4 class="hero-name">{{hero.name}}</h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-2 col-sm-offset-3 center-content">
+                <button class="btn btn-success btn-battle-result" ng-disabled="!readyToBattle()"
+                        ng-click="markBattleAsWon()">
+                    <span class="glyphicon glyphicon-thumbs-up">&nbsp;</span>
+                    I won
+                </button>
+            </div>
+            <div class="col-sm-2 center-content">
+                <button class="btn btn-battle-result" ng-disabled="!readyToBattle()" ng-click="markBattleAsDraw()">
+                    There was a draw
+                </button>
+            </div>
+            <div class="col-sm-2 center-content">
+                <button class="btn btn-danger btn-battle-result" ng-disabled="!readyToBattle()"
+                        ng-click="markBattleAsLost()">
+                    <span class="glyphicon glyphicon-thumbs-down">&nbsp;</span>
+                    I lost
+                </button>
+            </div>
+        </div>
+
+        <div class="row alerts-row">
+            <div ng-repeat="alert in alerts" class="col-sm-6 col-sm-offset-3 alert alert-dismissable alert-{{alert.type}}">
+                <button type="button" class="close" ng-click="closeAlert($index)">&times;</button>
+                {{alert.msg}}
+            </div>
+        </div>
+
+        <h3 class="center-content" ng-hide="games.length == 0">Recent games</h3>
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4 well center-content" ng-repeat="game in games">
+                <div class="thumbnail pull-left">
+                    <img src="{{getHeroImageUrl(game.player)}}"/>
+                </div>
+                <div class="thumbnail pull-right">
+                    <img src="{{getHeroImageUrl(game.opponent)}}"/>
+                </div>
+                <div ng-switch on="game.result" class="game-result-badge">
+                    <span class="label label-success" ng-switch-when="won">WIN</span>
+                    <span class="label label-danger" ng-switch-when="lost">LOST</span>
+                    <span class="label label-default" ng-switch-default>DRAW</span>
+                </div>
+                <div class="game-time">{{fromNow(game.at)}}</div>
+            </div>
+        </div>
+    </div>
+</script>
