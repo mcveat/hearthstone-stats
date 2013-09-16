@@ -52,11 +52,23 @@ app.controller 'MatchResultCtrl', ($scope, Restangular) ->
       opponent : $scope.opponentsHero.name
       result : result
     $scope.statsBase.post('game', battle).then(
-      ( (game) ->
-        console.log $scope.games
-        $scope.games.unshift game ),
+      ( (game) -> $scope.games.unshift game ),
       ( -> $scope.alerts.push
           type: 'danger'
           msg: 'Failed to submit game results. Try again?'
       )
     )
+
+app.controller 'StatsCtrl', ($scope, Restangular) ->
+  $scope.init = (id) ->
+    Restangular.one('stats', id).customGET('results').then (results) -> $scope.results = results
+    Restangular.all('heroes').getList().then (heroes) ->
+      $scope.heroes = heroes
+      $scope.heroRows = _.chain(heroes).groupBy((hero, index) -> Math.floor(index/3)).toArray().value()
+  $scope.value = (player, opponent, result) -> $scope.results?[player]?[opponent]?[result] ? 0
+  $scope.winPercentage = (player, opponent) ->
+    matchup = $scope.results?[player]?[opponent]
+    if !matchup? then return "N/A"
+    overall = _.chain(matchup).values().reduce((sum, e) -> sum + e).value()
+    wins = matchup['won'] ? 0
+    "#{(wins / overall * 100).toFixed(2)} %"
