@@ -1,0 +1,35 @@
+@(useAngular: Boolean, devEnvironment: Boolean)
+
+@if(devEnvironment) {
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.min.css")" data-noprefix>
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap-theme.min.css")" data-noprefix>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+
+    <script src="@routes.Assets.at("javascripts/jquery.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/prefixfree.min.js")"></script>
+    @if(useAngular) {
+        <script src="@routes.Assets.at("javascripts/underscore-min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/moment.min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/angular.min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/angular-resource.min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/restangular.min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/app.js")"></script>
+    }
+} else {
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" data-noprefix>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css" data-noprefix   >
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.min.css")">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+    @if(useAngular) {
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.1.0/moment.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular-resource.min.js"></script>
+        <script src="//cdn.jsdelivr.net/restangular/0.6.1/restangular.min.js"></script>
+        <script src="@routes.Assets.at("javascripts/app.min.js")"></script>
+    }
+}

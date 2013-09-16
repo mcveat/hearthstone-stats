@@ -16,7 +16,8 @@ object ApplicationBuild extends Build {
   val main = play.Project(appName, appVersion, appDependencies).settings(
     libraryDependencies ++= Seq(
       "org.reactivemongo" %% "play2-reactivemongo" % "0.9"
-    )
+    ),
+    scalacOptions ++= Seq("-feature", "-language:postfixOps")
   )
 
 }
