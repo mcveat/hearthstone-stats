@@ -48,8 +48,8 @@ object Application extends Controller with MongoController {
 
   def recentGames(id: String) = Action {
     Async {
-      collection.find(oid(id)).one[JsObject].filter(_.isDefined).map(_.get).map { stats =>
-        val games = (stats \ "games").as[List[Game]]
+      collection.find(oid(id)).one[JsObject].map { stats =>
+        val games = stats.flatMap(s => (s \ "games").asOpt[List[Game]]).getOrElse(Seq())
         Ok(Json.toJson(games.reverse.take(10))).as("application/json")
       }
     }
