@@ -25,7 +25,7 @@ object Application extends Controller with MongoController {
   }
 
   def stats(id: String) = Action {
-    Ok(views.html.stats(id))
+    Ok(views.html.app(id))
   }
 
   def heroes = Action {

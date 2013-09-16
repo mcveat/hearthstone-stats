@@ -1,0 +1,19 @@
+@(id: String)
+
+@main(useAngular = true) {
+    <div ng-app="hs">
+        <div class="row pills-row" ng-controller="MenuCtrl">
+            <div class="col-sm-4 col-sm-offset-4">
+                <ul class="nav nav-pills nav-justified">
+                    <li ng-class="{'active': path == '/game'}"><a ng-click="setTab('/game')">Play</a></li>
+                    <li ng-class="{'active': path == '/stats'}"><a ng-click="setTab('/stats')">Statistics</a></li>
+                    <li ng-class="{'active': path == '/about'}"><a ng-click="setTab('/about')">About</a></li>
+                </ul>
+            </div>
+        </div>
+        <div ng-view></div>
+
+        @game(id)
+        @about()
+    </div>
+}

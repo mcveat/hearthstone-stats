@@ -1,6 +1,18 @@
-battleModule = angular.module('hs-battle', ['restangular'])
+app = angular.module('hs', ['restangular'])
 
-battleModule.controller 'MatchResultCtrl', ($scope, Restangular) ->
+app.config ($routeProvider) ->
+  $routeProvider
+    .when('/game', { controller : 'MatchResultCtrl', templateUrl : 'game.html'})
+    .when('/about', { templateUrl : 'about.html'} )
+    .otherwise redirectTo : '/game'
+
+app.controller 'MenuCtrl', ($scope, $location) ->
+  $scope.path = $location.path()
+  $scope.setTab = (path) ->
+    $scope.path = path
+    $location.path path
+
+app.controller 'MatchResultCtrl', ($scope, Restangular) ->
   $scope.init = (id) ->
     $scope.statsBase = Restangular.one('stats', id)
     $scope.statsBase.all('games').getList().then (games) -> $scope.games = games
