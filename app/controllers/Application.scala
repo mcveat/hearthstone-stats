@@ -32,7 +32,8 @@ object Application extends Controller with MongoController {
   def heroes = Action {
     def heroJson(h: Hero) = Json.obj(
       "name" -> h.name,
-      "imageUrl" -> h.imageUrl
+      "imageUrl" -> h.imageUrl,
+      "thumbUrl" -> h.thumbUrl
     )
     Ok(Json.toJson( Hero.seq.map(heroJson))).as("application/json")
   }
@@ -52,11 +53,16 @@ object Application extends Controller with MongoController {
     }
   }
 
-  def recentGames(id: String) = Action {
+  def recentGames(id: String, skip: Option[Int]) = Action {
     Async {
       collection.find(oid(id)).one[JsObject].map { stats =>
-        val games = stats.flatMap(s => (s \ "games").asOpt[List[Game]]).getOrElse(Seq())
-        Ok(Json.toJson(games.reverse.take(10))).as("application/json")
+        val allGames = stats.flatMap(s => (s \ "games").asOpt[List[Game]]).getOrElse(Seq())
+        val (games, rest) = allGames.reverse.drop(skip.getOrElse(0)).splitAt(10)
+        val result = Json.obj(
+          "games" -> games,
+          "hasNext" -> rest.headOption.isDefined
+        )
+        Ok(Json.toJson(result)).as("application/json")
       }
     }
   }
@@ -75,6 +81,19 @@ object Application extends Controller with MongoController {
       val update = Json.obj(
         "$unset" -> Json.obj("games" -> ""),
         "$unset" -> Json.obj("ratios" -> "")
+      )
+      collection.update(oid(id), update).map(_ => Ok)
+    }
+  }
+
+  def removeGame(id: String, gameId: String) = Action {
+    Async {
+      val update = Json.obj(
+        "$pull" -> Json.obj(
+          "games" -> Json.obj(
+            "id" -> gameId
+          )
+        )
       )
       collection.update(oid(id), update).map(_ => Ok)
     }

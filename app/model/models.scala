@@ -20,7 +20,8 @@ object GameResult {
 }
 
 sealed class Hero(val name: String, fileName: String) {
-  def imageUrl = routes.Assets.at("images/%s.jpg".format(fileName)).url
+  def imageUrl = routes.Assets.at("images/heroes/%s.jpg".format(fileName)).url
+  def thumbUrl = routes.Assets.at("images/heroes/thumbs/%s.jpg".format(fileName)).url
 }
 case object Druid extends Hero("druid", "malfurion")
 case object Hunter extends Hero("hunter", "rexxar")

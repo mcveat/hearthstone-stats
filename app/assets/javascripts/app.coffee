@@ -16,7 +16,7 @@ app.controller 'MenuCtrl', ($scope, $location) ->
 app.controller 'MatchResultCtrl', ($scope, Restangular) ->
   $scope.init = (id) ->
     $scope.statsBase = Restangular.one('stats', id)
-    $scope.statsBase.all('games').getList().then (games) -> $scope.games = games
+    $scope.statsBase.customGET('games').then (gameList) -> $scope.gameList = gameList
     Restangular.all('heroes').getList().then (heroes) -> $scope.heroes = heroes
 
   $scope.alerts = []
@@ -43,11 +43,15 @@ app.controller 'MatchResultCtrl', ($scope, Restangular) ->
     hero = _.find($scope.heroes, (h) -> h.name == name)
     hero?.imageUrl
 
+  $scope.getHeroThumbUrl = (name) ->
+    hero = _.find($scope.heroes, (h) -> h.name == name)
+    hero?.thumbUrl
+
   $scope.fromNow = (timestamp) -> moment(timestamp).fromNow()
 
   $scope.reset = () ->
     $scope.statsBase.remove().then(
-      (-> $scope.games = []),
+      (-> $scope.gameList.games = []),
       ( -> $scope.alerts.push
         type: 'danger'
         msg: 'Failed to clean games history. Try again?'
@@ -55,6 +59,19 @@ app.controller 'MatchResultCtrl', ($scope, Restangular) ->
     )
     $('#reset-confirm-modal').modal('hide')
 
+  $scope.removeGame = (id) ->
+    $scope.statsBase.one('game', id).remove().then(
+      (-> $scope.gameList.games = _.reject $scope.gameList.games, (g) -> g.id == id),
+      ( -> $scope.alerts.push
+        type: 'danger'
+        msg: 'Failed to clean games history. Try again?'
+      )
+    )
+
+  $scope.nextGames = ->
+    $scope.statsBase.customGET('games', 'skip' : $scope.gameList.games.length).then (gamesList) ->
+      $scope.gameList.games = $scope.gameList.games.concat(gamesList.games)
+      $scope.gameList.hasNext = gamesList.hasNext
 
   postBattleResult = (result) ->
     battle =
@@ -62,7 +79,7 @@ app.controller 'MatchResultCtrl', ($scope, Restangular) ->
       opponent : $scope.opponentsHero.name
       result : result
     $scope.statsBase.post('game', battle).then(
-      ( (game) -> $scope.games.unshift game ),
+      ( (game) -> $scope.gameList.games.unshift game ),
       ( -> $scope.alerts.push
           type: 'danger'
           msg: 'Failed to submit game results. Try again?'

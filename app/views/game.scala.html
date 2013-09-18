@@ -59,27 +59,33 @@
             </div>
         </div>
 
-        <h3 class="center-content" ng-hide="games.length == 0">
+        <h3 class="center-content" ng-hide="gameList.games.length == 0">
             Recent games
             <small>
                 (<a data-toggle="modal" href="#reset-confirm-modal" class="gray-link">reset games history</a>)
             </small>
         </h3>
         <div class="row">
-            <div class="col-sm-4 col-sm-offset-4 well center-content" ng-repeat="game in games">
-                <div class="thumbnail pull-left">
-                    <img src="{{getHeroImageUrl(game.player)}}"/>
-                </div>
-                <div class="thumbnail pull-right">
-                    <img src="{{getHeroImageUrl(game.opponent)}}"/>
-                </div>
-                <div ng-switch on="game.result" class="game-result-badge">
+            <div class="col-sm-4 col-sm-offset-4 well center-content game-result-well" ng-repeat="game in gameList.games">
+                <div ng-switch on="game.result" class="game-result-badge pull-left">
                     <span class="label label-success" ng-switch-when="won">WIN</span>
                     <span class="label label-danger" ng-switch-when="lost">LOST</span>
                     <span class="label label-default" ng-switch-default>DRAW</span>
                 </div>
-                <div class="game-time">{{fromNow(game.at)}}</div>
+                <div class="thumbnail pull-left game-result-thumbnail">
+                    <img src="{{getHeroThumbUrl(game.player)}}"/>
+                </div>
+                <div class="thumbnail pull-left game-result-thumbnail">
+                    <img src="{{getHeroThumbUrl(game.opponent)}}"/>
+                </div>
+                <div class="game-time pull-left">{{fromNow(game.at)}}</div>
+                <div class="pull-right delete-matchup">
+                    <button type="button" class="btn close" ng-click="removeGame(game.id)">&times;</button>
+                </div>
             </div>
+        </div>
+        <div class="row" ng-hide="!gameList.hasNext">
+            <button class="col-sm-4 col-sm-offset-4 btn next-games-button" ng-click="nextGames()">Next</button>
         </div>
     </div>
 
