@@ -59,7 +59,12 @@
             </div>
         </div>
 
-        <h3 class="center-content" ng-hide="games.length == 0">Recent games</h3>
+        <h3 class="center-content" ng-hide="games.length == 0">
+            Recent games
+            <small>
+                (<a data-toggle="modal" href="#reset-confirm-modal" class="gray-link">reset games history</a>)
+            </small>
+        </h3>
         <div class="row">
             <div class="col-sm-4 col-sm-offset-4 well center-content" ng-repeat="game in games">
                 <div class="thumbnail pull-left">
@@ -74,6 +79,27 @@
                     <span class="label label-default" ng-switch-default>DRAW</span>
                 </div>
                 <div class="game-time">{{fromNow(game.at)}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="reset-confirm-modal" tabindex="-1" role="dialog"
+    aria-labelledby="reset-confirm-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Just to make sure you didn't misclicked ...</h4>
+                </div>
+                <div class="modal-body">
+                    Do you really want to wipe out your match history? There will be no way to recover it. Don't even ask.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" ng-click="reset()">
+                        <span class=".glyphicon .glyphicon-trash"></span> Reset
+                    </button>
+                </div>
             </div>
         </div>
     </div>

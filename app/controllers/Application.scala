@@ -70,5 +70,15 @@ object Application extends Controller with MongoController {
     }
   }
 
+  def reset(id:String) = Action {
+    Async {
+      val update = Json.obj(
+        "$unset" -> Json.obj("games" -> ""),
+        "$unset" -> Json.obj("ratios" -> "")
+      )
+      collection.update(oid(id), update).map(_ => Ok)
+    }
+  }
+
   private def oid(id: String) = Json.obj("_id" -> Json.obj("$oid" -> id))
 }

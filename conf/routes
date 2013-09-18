@@ -3,13 +3,14 @@
 # ~~~~
 
 # Home page
-GET         /                       controllers.Application.index
-GET         /new                    controllers.Application.newStatsPage
-GET         /heroes                 controllers.Application.heroes
-GET         /stats/:id              controllers.Application.stats(id: String)
-POST        /stats/:id/game         controllers.Application.recordGame(id: String)
-GET         /stats/:id/games        controllers.Application.recentGames(id: String)
-GET         /stats/:id/results      controllers.Application.results(id: String)
+GET         /                         controllers.Application.index
+GET         /new                      controllers.Application.newStatsPage
+GET         /heroes                   controllers.Application.heroes
+GET         /stats/:id                controllers.Application.stats(id: String)
+DELETE      /stats/:id                controllers.Application.reset(id:String)
+POST        /stats/:id/game           controllers.Application.recordGame(id: String)
+GET         /stats/:id/games          controllers.Application.recentGames(id: String)
+GET         /stats/:id/results        controllers.Application.results(id: String)
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file           controllers.Assets.at(path="/public", file)
+GET         /assets/*file             controllers.Assets.at(path="/public", file)

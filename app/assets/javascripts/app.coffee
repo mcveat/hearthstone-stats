@@ -45,6 +45,16 @@ app.controller 'MatchResultCtrl', ($scope, Restangular) ->
 
   $scope.fromNow = (timestamp) -> moment(timestamp).fromNow()
 
+  $scope.reset = () ->
+    $scope.statsBase.remove().then(
+      (-> $scope.games = []),
+      ( -> $scope.alerts.push
+        type: 'danger'
+        msg: 'Failed to clean games history. Try again?'
+      )
+    )
+    $('#reset-confirm-modal').modal('hide')
+
 
   postBattleResult = (result) ->
     battle =
