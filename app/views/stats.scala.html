@@ -7,7 +7,7 @@
                 <div ng-repeat="playerHero in row" class="col-sm-4">
                     <div class="panel panel-info">
                         <div class="panel-heading panel-hero-name">
-                            <img src="{{playerHero.imageUrl}}" class="img-rounded"/>
+                            <img ng-src="{{playerHero.imageUrl}}" class="img-rounded"/>
                             {{playerHero.name}}
                         </div>
                     </div>

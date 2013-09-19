@@ -9,7 +9,7 @@
             <div ng-repeat="hero in heroes" class="col-sm-1 center-content hero-box"
                     ng-class="{'selected-hero' : hero == playersHero}" ng-click="setPlayersHero(hero)">
                 <a class="thumbnail">
-                    <img src="{{hero.imageUrl}}" class="img-rounded"/>
+                    <img ng-src="{{hero.imageUrl}}" class="img-rounded"/>
                 </a>
                 <h4 class="hero-name">{{hero.name}}</h4>
             </div>
@@ -24,7 +24,7 @@
             <div ng-repeat="hero in heroes" class="col-sm-1 center-content hero-box"
             ng-class="{'selected-hero' : hero == opponentsHero}" ng-click="setOpponentsHero(hero)">
                 <a class="thumbnail">
-                    <img src="{{hero.imageUrl}}" class="img-rounded"/>
+                    <img ng-src="{{hero.imageUrl}}" class="img-rounded"/>
                 </a>
                 <h4 class="hero-name">{{hero.name}}</h4>
             </div>
@@ -73,10 +73,10 @@
                     <span class="label label-default" ng-switch-default>DRAW</span>
                 </div>
                 <div class="thumbnail pull-left game-result-thumbnail">
-                    <img src="{{getHeroThumbUrl(game.player)}}"/>
+                    <img ng-src="{{getHeroThumbUrl(game.player)}}"/>
                 </div>
                 <div class="thumbnail pull-left game-result-thumbnail">
-                    <img src="{{getHeroThumbUrl(game.opponent)}}"/>
+                    <img ng-src="{{getHeroThumbUrl(game.opponent)}}"/>
                 </div>
                 <div class="game-time pull-left">{{fromNow(game.at)}}</div>
                 <div class="pull-right delete-matchup">
