@@ -99,3 +99,16 @@ app.controller 'StatsCtrl', ($scope, Restangular) ->
     overall = _.chain(matchup).values().reduce((sum, e) -> sum + e).value()
     wins = matchup['won'] ? 0
     "#{(wins / overall * 100).toFixed(2)} %"
+
+  rainbow = new Rainbow()
+  rainbow.setSpectrum('#FFBEBE', '#8DE28D')
+  $scope.rainbow = rainbow
+
+  $scope.getColorFor = (player, opponent) ->
+    matchup = $scope.results?[player]?[opponent]
+    if !matchup? then return "#FFFFFFFF"
+    overall = _.chain(matchup).values().reduce((sum, e) -> sum + e).value()
+    wins = matchup['won'] ? 0
+    percentage = wins / overall * 100
+    "##{$scope.rainbow.colourAt(percentage)}"
+

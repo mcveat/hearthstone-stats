@@ -11,7 +11,7 @@
                             {{playerHero.name}}
                         </div>
                     </div>
-                    <table class="table table-striped table-condensed table-hover">
+                    <table class="table table-condensed">
                         <thead>
                             <tr>
                                 <th>Against</th>
@@ -21,7 +21,8 @@
                                 <th>Win %</th>
                             </tr>
                         </thead>
-                        <tr ng-repeat="opponentHero in heroes">
+                        <tr ng-repeat="opponentHero in heroes"
+                                style="background: {{getColorFor(playerHero.name, opponentHero.name)}}">
                             <td class="hero-name">{{opponentHero.name}}</td>
                             <td>{{value(playerHero.name, opponentHero.name, 'won')}}</td>
                             <td>{{value(playerHero.name, opponentHero.name, 'draw')}}</td>
