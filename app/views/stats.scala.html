@@ -3,33 +3,55 @@
 <script type="text/ng-template" id="stats.html">
     <div id="stats-wrapper">
         <div ng-init="init('@id')">
+            <div class="row drawing-buttons well">
+                <div class="col-sm-4 col-sm-offset-4 center-content">
+                    <div class="btn-group btn-group-justified">
+                        <a type="button" class="btn" ng-click="setDrawing('first')"
+                        ng-class="{
+                                    'btn-primary active' : drawing == 'first',
+                                    'btn-default' : drawing != 'first'
+                            }">
+                            Drawing first
+                        </a>
+                        <a type="button" class="btn btn-default" ng-click="setDrawing('second')"
+                        ng-class="{
+                                    'btn-primary active' : drawing == 'second',
+                                    'btn-default' : drawing != 'second'
+                            }">
+                            Drawing second
+                        </a>
+                    </div>
+                </div>
+            </div>
+
             <div ng-repeat="row in heroRows" class="row">
                 <div ng-repeat="playerHero in row" class="col-sm-4">
-                    <div class="panel panel-info">
+                    <div class="panel panel-default">
                         <div class="panel-heading panel-hero-name">
                             <img ng-src="{{playerHero.imageUrl}}" class="img-rounded"/>
                             {{playerHero.name}}
                         </div>
-                    </div>
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr>
-                                <th>Against</th>
-                                <th>Win</th>
-                                <th>Draw</th>
-                                <th>Lost</th>
-                                <th>Win %</th>
+
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Against</th>
+                                    <th>Win</th>
+                                    <th>Draw</th>
+                                    <th>Lost</th>
+                                    <th>Win %</th>
+                                </tr>
+                            </thead>
+                            <tr ng-repeat="opponentHero in heroes"
+                                    ng-style="{'background-color': getColorFor(playerHero.name, opponentHero.name)}">
+                                <td class="hero-name">{{opponentHero.name}}</td>
+                                <td>{{value(playerHero.name, opponentHero.name, 'won')}}</td>
+                                <td>{{value(playerHero.name, opponentHero.name, 'draw')}}</td>
+                                <td>{{value(playerHero.name, opponentHero.name, 'lost')}}</td>
+                                <td>{{winPercentage(playerHero.name, opponentHero.name)}}</td>
                             </tr>
-                        </thead>
-                        <tr ng-repeat="opponentHero in heroes"
-                                style="background: {{getColorFor(playerHero.name, opponentHero.name)}}">
-                            <td class="hero-name">{{opponentHero.name}}</td>
-                            <td>{{value(playerHero.name, opponentHero.name, 'won')}}</td>
-                            <td>{{value(playerHero.name, opponentHero.name, 'draw')}}</td>
-                            <td>{{value(playerHero.name, opponentHero.name, 'lost')}}</td>
-                            <td>{{winPercentage(playerHero.name, opponentHero.name)}}</td>
-                        </tr>
-                    </table>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

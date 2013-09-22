@@ -73,11 +73,16 @@ app.controller 'MatchResultCtrl', ($scope, Restangular) ->
       $scope.gameList.games = $scope.gameList.games.concat(gamesList.games)
       $scope.gameList.hasNext = gamesList.hasNext
 
+  $scope.setDrawing = (state) ->
+    if $scope.drawing != state then $scope.drawing = state
+    else $scope.drawing = null
+
   postBattleResult = (result) ->
     battle =
       player : $scope.playersHero.name
       opponent : $scope.opponentsHero.name
       result : result
+      drawing : $scope.drawing
     $scope.statsBase.post('game', battle).then(
       ( (game) -> $scope.gameList.games.unshift game ),
       ( -> $scope.alerts.push
@@ -92,23 +97,32 @@ app.controller 'StatsCtrl', ($scope, Restangular) ->
     Restangular.all('heroes').getList().then (heroes) ->
       $scope.heroes = heroes
       $scope.heroRows = _.chain(heroes).groupBy((hero, index) -> Math.floor(index/3)).toArray().value()
-  $scope.value = (player, opponent, result) -> $scope.results?[player]?[opponent]?[result] ? 0
+
+  $scope.value = (player, opponent, result) -> getMatchup(player, opponent)?[result] ? 0
+
   $scope.winPercentage = (player, opponent) ->
-    matchup = $scope.results?[player]?[opponent]
+    matchup = getMatchup(player, opponent)
     if !matchup? then return "N/A"
-    overall = _.chain(matchup).values().reduce((sum, e) -> sum + e).value()
-    wins = matchup['won'] ? 0
-    "#{(wins / overall * 100).toFixed(2)} %"
+    "#{getMatchupWinRatio(matchup).toFixed(2)}"
 
   rainbow = new Rainbow()
   rainbow.setSpectrum('#FFBEBE', '#8DE28D')
   $scope.rainbow = rainbow
 
   $scope.getColorFor = (player, opponent) ->
-    matchup = $scope.results?[player]?[opponent]
+    matchup = getMatchup(player, opponent)
     if !matchup? then return "#FFFFFFFF"
-    overall = _.chain(matchup).values().reduce((sum, e) -> sum + e).value()
-    wins = matchup['won'] ? 0
-    percentage = wins / overall * 100
-    "##{$scope.rainbow.colourAt(percentage)}"
+    "##{$scope.rainbow.colourAt(getMatchupWinRatio(matchup))}"
 
+  $scope.setDrawing = (state) ->
+    if $scope.drawing != state then $scope.drawing = state
+    else $scope.drawing = null
+
+  getMatchup = (player, opponent) ->
+    matchup = $scope.results?[player]?[opponent]
+    if $scope.drawing? then matchup = matchup?[$scope.drawing]
+    matchup
+
+  getMatchupWinRatio = (matchup) ->
+    overall = _.chain(matchup).omit('first', 'second').values().reduce((sum, e) -> sum + e).value()
+    (matchup['won'] ? 0) / overall * 100

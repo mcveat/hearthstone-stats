@@ -15,14 +15,14 @@
             </div>
         </div>
 
-        <h3 class="center-content">VS</h3>
+        <h3 class="center-content vs">VS</h3>
 
         <div class="row well hero-chooser">
             <div class="col-sm-1 col-sm-offset-1 center-content">
                 <h2>OPP</h2>
             </div>
             <div ng-repeat="hero in heroes" class="col-sm-1 center-content hero-box"
-            ng-class="{'selected-hero' : hero == opponentsHero}" ng-click="setOpponentsHero(hero)">
+                    ng-class="{'selected-hero' : hero == opponentsHero}" ng-click="setOpponentsHero(hero)">
                 <a class="thumbnail">
                     <img ng-src="{{hero.imageUrl}}" class="img-rounded"/>
                 </a>
@@ -30,25 +30,45 @@
             </div>
         </div>
 
+        <div class="row drawing-buttons">
+            <div class="col-sm-4 col-sm-offset-4 center-content">
+                <div class="btn-group btn-group-justified">
+                    <a type="button" class="btn" ng-click="setDrawing('first')"
+                            ng-class="{
+                                    'btn-primary active' : drawing == 'first',
+                                    'btn-default' : drawing != 'first'
+                            }">
+                        Drawing first
+                    </a>
+                    <a type="button" class="btn btn-default" ng-click="setDrawing('second')"
+                            ng-class="{
+                                    'btn-primary active' : drawing == 'second',
+                                    'btn-default' : drawing != 'second'
+                            }">
+                        Drawing second
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
-            <div class="col-sm-2 col-sm-offset-3 center-content">
-                <button class="btn btn-success btn-battle-result" ng-disabled="!readyToBattle()"
-                        ng-click="markBattleAsWon()">
-                    <span class="glyphicon glyphicon-thumbs-up">&nbsp;</span>
-                    I won
-                </button>
-            </div>
-            <div class="col-sm-2 center-content">
-                <button class="btn btn-battle-result" ng-disabled="!readyToBattle()" ng-click="markBattleAsDraw()">
-                    There was a draw
-                </button>
-            </div>
-            <div class="col-sm-2 center-content">
-                <button class="btn btn-danger btn-battle-result" ng-disabled="!readyToBattle()"
-                        ng-click="markBattleAsLost()">
-                    <span class="glyphicon glyphicon-thumbs-down">&nbsp;</span>
-                    I lost
-                </button>
+            <div class="col-sm-6 col-sm-offset-3 center-content">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn btn-success btn-battle-result" ng-disabled="!readyToBattle()"
+                            ng-click="markBattleAsWon()">
+                        <span class="glyphicon glyphicon-thumbs-up">&nbsp;</span>
+                        I won
+                    </a>
+                    <a class="btn btn-default btn-battle-result" ng-disabled="!readyToBattle()"
+                            ng-click="markBattleAsDraw()">
+                        There was a draw
+                    </a>
+                    <a class="btn btn-danger btn-battle-result" ng-disabled="!readyToBattle()"
+                            ng-click="markBattleAsLost()">
+                        <span class="glyphicon glyphicon-thumbs-down">&nbsp;</span>
+                        I lost
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -77,6 +97,12 @@
                 </div>
                 <div class="thumbnail pull-left game-result-thumbnail">
                     <img ng-src="{{getHeroThumbUrl(game.opponent)}}"/>
+                </div>
+                <div ng-switch on="game.drawing" class="game-result-badge pull-left">
+                    <span class="label label-primary" ng-switch-when="first" data-toggle="tooltip"
+                            title="Drawing First">F</span>
+                    <span class="label label-primary" ng-switch-when="second" data-toggle="tooltip"
+                            title="Drawing second">S</span>
                 </div>
                 <div class="game-time pull-left">{{fromNow(game.at)}}</div>
                 <div class="pull-right delete-matchup">

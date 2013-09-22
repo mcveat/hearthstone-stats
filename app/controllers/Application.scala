@@ -41,11 +41,15 @@ object Application extends Controller with MongoController {
   def recordGame(id: String) = Action(parse.json) { implicit request =>
     Async {
       val game = request.body.as[GameResultRequest].newGame
+      val inc = Seq(
+        Some(s"ratios.${game.player.name}.${game.opponent.name}.${game.result.str}" -> 1),
+        game.drawing.map { drawing =>
+          s"ratios.${game.player.name}.${game.opponent.name}.${drawing.str}.${game.result.str}" -> 1
+        }
+      )
       val update = Json.obj(
         "$push" -> Json.obj("games" -> game),
-        "$inc" -> Json.obj(
-          s"ratios.${game.player.name}.${game.opponent.name}.${game.result.str}" -> 1
-        )
+        "$inc" -> Json.toJson(inc.flatten.toMap)
       )
       collection.update(oid(id), update).map { _ =>
         Ok(Json.toJson(game)).as("application/json")

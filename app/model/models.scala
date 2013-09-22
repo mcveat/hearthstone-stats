@@ -40,26 +40,37 @@ object Hero {
   }
 }
 
-case class GameResultRequest(player: Hero, opponent: Hero, result: GameResult) {
-  def newGame = Game(BSONObjectID.generate.stringify, player, opponent, result, new Date().getTime)
+sealed class Drawing(val str: String)
+case object First extends Drawing("first")
+case object Second extends Drawing("second")
+object Drawing {
+  def seq = Seq(First, Second)
+  def apply(s: String) = {
+    val lower = s.toLowerCase
+    seq.find(lower == _.str)
+  }
 }
 
-case class Game(id: String, player: Hero, opponent: Hero, result: GameResult, at: Long)
+case class GameResultRequest(player: Hero, opponent: Hero, result: GameResult, drawing: Option[Drawing]) {
+  def newGame = Game(BSONObjectID.generate.stringify, player, opponent, result, new Date().getTime, drawing)
+}
+
+case class Game(id: String, player: Hero, opponent: Hero, result: GameResult, at: Long, drawing: Option[Drawing])
 
 object JsonFormats {
   import play.api.libs.json._
 
-  implicit val gameResultReads = new Reads[GameResult] {
+  implicit val gameResultReads = new Format[GameResult] {
     def reads(json: JsValue) = GameResult(json.as[String]).map(JsSuccess(_)).getOrElse(JsError("game result"))
-  }
-  implicit val gameResultWrites = new Writes[GameResult] {
     def writes(o: GameResult) = JsString(o.str)
   }
-  implicit val heroReads = new Reads[Hero] {
+  implicit val heroReads = new Format[Hero] {
     def reads(json: JsValue) = Hero(json.as[String]).map(JsSuccess(_)).getOrElse(JsError("hero"))
-  }
-  implicit val heroWrites = new Writes[Hero] {
     def writes(o: Hero) = JsString(o.name)
+  }
+  implicit val drawingReads = new Format[Drawing] {
+    def reads(json: JsValue) = Drawing(json.as[String]).map(JsSuccess(_)).getOrElse(JsError("drawing state"))
+    def writes(o: Drawing) = JsString(o.str)
   }
   implicit val gameResultRequestFormat = Json.format[GameResultRequest]
   implicit val gameFormat = Json.format[Game]
