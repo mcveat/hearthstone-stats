@@ -26,7 +26,7 @@
 
             <div ng-repeat="row in heroRows" class="row">
                 <div ng-repeat="playerHero in row" class="col-sm-4">
-                    <div class="panel panel-default">
+                    <div ng-repeat="stats in statsOf(playerHero.name)" class="panel panel-default">
                         <div class="panel-heading panel-hero-name" style="overflow: hidden;">
                             <img ng-src="{{playerHero.imageUrl}}" class="img-rounded"/>
                             {{playerHero.name}}
@@ -44,7 +44,7 @@
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </th>
                                     <th data-toggle="tooltip" title="Win ratio when playing as {{playerHero.name}}">
-                                        M %
+                                        MP %
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </th>
                                     <th data-toggle="tooltip" title="Win ratio when playing against {{playerHero.name}}">
@@ -54,13 +54,13 @@
                                 </tr>
                             </thead>
                             <tr>
-                                <td>{{getNumberOfMatchesPlayed(playerHero.name)}}</td>
-                                <td>{{getNumberOfMatchesPlayedAgainst(playerHero.name)}}</td>
-                                <td ng-style="{'background-color' : getColorForOverall(getOverallMatchups(playerHero.name))}">
-                                    {{getOverallWinRatio(playerHero.name)}}
+                                <td>{{stats.overall.matches}}</td>
+                                <td>{{stats.overall.matchesAgainst}}</td>
+                                <td ng-style="{'background-color' : stats.overall.matchesColor}">
+                                    {{stats.overall.winRatio}}
                                 </td>
-                                <td ng-style="{'background-color' : getColorForOverall(getOverallAgainstMatchups(playerHero.name))}">
-                                    {{getOverallWinAgainstRatio(playerHero.name)}}
+                                <td ng-style="{'background-color' : stats.overall.matchesAgainstColor}">
+                                    {{stats.overall.winAgainstRatio}}
                                 </td>
                             </tr>
                         </table>
@@ -76,12 +76,12 @@
                                 </tr>
                             </thead>
                             <tr ng-repeat="opponentHero in heroes"
-                                    ng-style="{'background-color': getColorFor(playerHero.name, opponentHero.name)}">
+                                    ng-style="{'background-color': stats.matchups[opponentHero.name].color}">
                                 <td class="hero-name">{{opponentHero.name}}</td>
-                                <td>{{value(playerHero.name, opponentHero.name, 'won')}}</td>
-                                <td>{{value(playerHero.name, opponentHero.name, 'draw')}}</td>
-                                <td>{{value(playerHero.name, opponentHero.name, 'lost')}}</td>
-                                <td>{{winPercentage(playerHero.name, opponentHero.name)}}</td>
+                                <td>{{stats.matchups[opponentHero.name].win}}</td>
+                                <td>{{stats.matchups[opponentHero.name].draw}}</td>
+                                <td>{{stats.matchups[opponentHero.name].lost}}</td>
+                                <td>{{stats.matchups[opponentHero.name].ratio}}</td>
                             </tr>
                         </table>
                     </div>

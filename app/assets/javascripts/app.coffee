@@ -98,74 +98,78 @@ app.controller 'StatsCtrl', ($scope, Restangular) ->
       $scope.heroes = heroes
       $scope.heroRows = _.chain(heroes).groupBy((hero, index) -> Math.floor(index/3)).toArray().value()
 
-  $scope.value = (player, opponent, result) -> getMatchup(player, opponent)?[result] ? 0
-
-  $scope.winPercentage = (player, opponent) ->
-    matchup = getMatchup(player, opponent)
-    if !matchup? then return "N/A"
-    "#{getMatchupWinRatio(matchup).toFixed(2)}"
-
-  rainbow = new Rainbow()
-  rainbow.setSpectrum('#FFBEBE', '#8DE28D')
-  $scope.rainbow = rainbow
-
-  $scope.getColorFor = (player, opponent) ->
-    matchup = getMatchup(player, opponent)
-    if !matchup? then return "#FFFFFFFF"
-    "##{$scope.rainbow.colourAt(getMatchupWinRatio(matchup))}"
-
   $scope.setDrawing = (state) ->
     if $scope.drawing != state then $scope.drawing = state
     else $scope.drawing = null
 
-  $scope.getOverallWinRatio = (hero) ->
-    ratio = getOverallRatio($scope.getOverallMatchups(hero))
-    if !ratio? then return 'N/A'
-    ratio.toFixed(2)
+  $scope.statsOf = (hero) ->
+    if !$scope.heroes? or !$scope.results? then return []
 
-  $scope.getOverallMatchups = (hero) ->
+    stats =
+      $$hashKey : 1
+      overall : getOverallStats hero
+      matchups : getMatchupsFor hero
+
+    [stats]
+
+  getOverallStats = (hero) ->
+    overallMatchups = getOverallMatchups(hero)
+    numberOfOverallMatchups = getNumberOfMatches(overallMatchups)
+    winRatio = getOverallRatio(overallMatchups, numberOfOverallMatchups)
+
+    overallAgainstMatchups = getOverallAgainstMatchups(hero)
+    numberOfOverallAgainstMatchups = getNumberOfMatches(overallAgainstMatchups)
+    winAgainstRatio = getOverallRatio(overallAgainstMatchups, numberOfOverallAgainstMatchups)
+
+    matches : numberOfOverallMatchups ? 0
+    winRatio : winRatio?.toFixed(2) ? 'N/A'
+    matchesColor : getColorFor(winRatio)
+    matchesAgainst : numberOfOverallAgainstMatchups ? 0
+    winAgainstRatio : winAgainstRatio?.toFixed(2) ? 'N/A'
+    matchesAgainstColor : getColorFor(winAgainstRatio)
+
+  getMatchupsFor = (hero) -> _.chain($scope.heroes).map((h) -> [h.name, getMatchup(hero, h.name)]).object().value()
+
+  getMatchup = (player, opponent) ->
+    matchup = $scope.results?[player]?[opponent]
+    if $scope.drawing? then matchup = matchup?[$scope.drawing]
+    win = matchup?.won ? 0
+    games = getGames(matchup)
+    ratio = if games > 0 then win / games * 100 else null
+
+    win : win
+    draw : matchup?.draw ? 0
+    lost : matchup?.lost ? 0
+    ratio : ratio?.toFixed(2) ? 'N/A'
+    color : getColorFor(ratio)
+
+  getOverallMatchups = (hero) ->
     results = $scope.results?[hero]
     if !results? then return null
     matchups = _.values(results)
     if $scope.drawing? then matchups = _.pluck(matchups, $scope.drawing)
     matchups
 
-  $scope.getOverallWinAgainstRatio = (hero) ->
-    ratio = getOverallRatio($scope.getOverallAgainstMatchups(hero))
-    if !ratio? then return 'N/A'
-    ratio.toFixed(2)
-
-  $scope.getOverallAgainstMatchups = (hero) ->
+  getOverallAgainstMatchups = (hero) ->
     if !$scope.results? then return null
     matchups = _.chain($scope.results).values().filter((m) -> _.has(m, hero)).pluck(hero).value()
     if $scope.drawing? then matchups = _.pluck(matchups, $scope.drawing)
     matchups
 
-  $scope.getNumberOfMatchesPlayed = (hero) ->
-    getNumberOfMatches($scope.getOverallMatchups(hero))
+  getNumberOfMatches = (matchups) ->
+    _.chain(matchups).map((m) -> getGames(m)).reduce(((sum, e) -> sum + e), 0).value()
 
-  $scope.getNumberOfMatchesPlayedAgainst = (hero) ->
-    getNumberOfMatches($scope.getOverallAgainstMatchups(hero))
-
-  $scope.getColorForOverall = (matchups) ->
-    ratio = getOverallRatio(matchups)
-    if !ratio? then return "#FFFFFFFF"
-    "##{$scope.rainbow.colourAt(ratio)}"
-
-  getOverallRatio = (matchups) ->
-    overall = getNumberOfMatches(matchups)
+  getOverallRatio = (matchups, overall) ->
     if overall == 0 then return null
     win = _.chain(matchups).map((m) -> m?.won ? 0).reduce(((sum, e) -> sum + e), 0).value()
     win / overall * 100
 
-  getNumberOfMatches = (matchups) ->
-    _.chain(matchups).map((m) -> getGames(m)).reduce(((sum, e) -> sum + e), 0).value()
+  rainbow = new Rainbow()
+  rainbow.setSpectrum('#FFBEBE', '#8DE28D')
+  $scope.rainbow = rainbow
 
-  getMatchup = (player, opponent) ->
-    matchup = $scope.results?[player]?[opponent]
-    if $scope.drawing? then matchup = matchup?[$scope.drawing]
-    matchup
+  getColorFor = (ratio) ->
+    if !ratio? then return "#FFFFFFFF"
+    "##{$scope.rainbow.colourAt(ratio)}"
 
   getGames = (matchup) -> _.chain(matchup).omit('first', 'second').values().reduce(((sum, e) -> sum + e), 0).value()
-
-  getMatchupWinRatio = (matchup) -> (matchup.won ? 0) / getGames(matchup) * 100
