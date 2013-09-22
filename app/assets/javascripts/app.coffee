@@ -118,11 +118,54 @@ app.controller 'StatsCtrl', ($scope, Restangular) ->
     if $scope.drawing != state then $scope.drawing = state
     else $scope.drawing = null
 
+  $scope.getOverallWinRatio = (hero) ->
+    ratio = getOverallRatio($scope.getOverallMatchups(hero))
+    if !ratio? then return 'N/A'
+    ratio.toFixed(2)
+
+  $scope.getOverallMatchups = (hero) ->
+    results = $scope.results?[hero]
+    if !results? then return null
+    matchups = _.values(results)
+    if $scope.drawing? then matchups = _.pluck(matchups, $scope.drawing)
+    matchups
+
+  $scope.getOverallWinAgainstRatio = (hero) ->
+    ratio = getOverallRatio($scope.getOverallAgainstMatchups(hero))
+    if !ratio? then return 'N/A'
+    ratio.toFixed(2)
+
+  $scope.getOverallAgainstMatchups = (hero) ->
+    if !$scope.results? then return null
+    matchups = _.chain($scope.results).values().filter((m) -> _.has(m, hero)).pluck(hero).value()
+    if $scope.drawing? then matchups = _.pluck(matchups, $scope.drawing)
+    matchups
+
+  $scope.getNumberOfMatchesPlayed = (hero) ->
+    getNumberOfMatches($scope.getOverallMatchups(hero))
+
+  $scope.getNumberOfMatchesPlayedAgainst = (hero) ->
+    getNumberOfMatches($scope.getOverallAgainstMatchups(hero))
+
+  $scope.getColorForOverall = (matchups) ->
+    ratio = getOverallRatio(matchups)
+    if !ratio? then return "#FFFFFFFF"
+    "##{$scope.rainbow.colourAt(ratio)}"
+
+  getOverallRatio = (matchups) ->
+    overall = getNumberOfMatches(matchups)
+    if overall == 0 then return null
+    win = _.chain(matchups).map((m) -> m?.won ? 0).reduce(((sum, e) -> sum + e), 0).value()
+    win / overall * 100
+
+  getNumberOfMatches = (matchups) ->
+    _.chain(matchups).map((m) -> getGames(m)).reduce(((sum, e) -> sum + e), 0).value()
+
   getMatchup = (player, opponent) ->
     matchup = $scope.results?[player]?[opponent]
     if $scope.drawing? then matchup = matchup?[$scope.drawing]
     matchup
 
-  getMatchupWinRatio = (matchup) ->
-    overall = _.chain(matchup).omit('first', 'second').values().reduce((sum, e) -> sum + e).value()
-    (matchup['won'] ? 0) / overall * 100
+  getGames = (matchup) -> _.chain(matchup).omit('first', 'second').values().reduce(((sum, e) -> sum + e), 0).value()
+
+  getMatchupWinRatio = (matchup) -> (matchup.won ? 0) / getGames(matchup) * 100

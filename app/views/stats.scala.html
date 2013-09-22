@@ -27,10 +27,43 @@
             <div ng-repeat="row in heroRows" class="row">
                 <div ng-repeat="playerHero in row" class="col-sm-4">
                     <div class="panel panel-default">
-                        <div class="panel-heading panel-hero-name">
+                        <div class="panel-heading panel-hero-name" style="overflow: hidden;">
                             <img ng-src="{{playerHero.imageUrl}}" class="img-rounded"/>
                             {{playerHero.name}}
                         </div>
+
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th data-toggle="tooltip" title="Number of matches played as {{playerHero.name}}">
+                                        MP
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </th>
+                                    <th data-toggle="tooltip" title="Number of matches played against {{playerHero.name}}">
+                                        MA
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </th>
+                                    <th data-toggle="tooltip" title="Win ratio when playing as {{playerHero.name}}">
+                                        M %
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </th>
+                                    <th data-toggle="tooltip" title="Win ratio when playing against {{playerHero.name}}">
+                                        MA %
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td>{{getNumberOfMatchesPlayed(playerHero.name)}}</td>
+                                <td>{{getNumberOfMatchesPlayedAgainst(playerHero.name)}}</td>
+                                <td ng-style="{'background-color' : getColorForOverall(getOverallMatchups(playerHero.name))}">
+                                    {{getOverallWinRatio(playerHero.name)}}
+                                </td>
+                                <td ng-style="{'background-color' : getColorForOverall(getOverallAgainstMatchups(playerHero.name))}">
+                                    {{getOverallWinAgainstRatio(playerHero.name)}}
+                                </td>
+                            </tr>
+                        </table>
 
                         <table class="table table-condensed">
                             <thead>
