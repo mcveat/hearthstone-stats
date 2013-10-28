@@ -93,7 +93,9 @@ app.controller 'MatchResultCtrl', ($scope, Restangular) ->
 
 app.controller 'StatsCtrl', ($scope, Restangular) ->
   $scope.init = (id) ->
-    Restangular.one('stats', id).customGET('results').then (results) -> $scope.results = results
+    Restangular.one('stats', id).customGET('results').then (results) ->
+      $scope.results = results.stats
+      $scope.summary = calculateSummary(results.games)
     Restangular.all('heroes').getList().then (heroes) ->
       $scope.heroes = heroes
       $scope.heroRows = _.chain(heroes).groupBy((hero, index) -> Math.floor(index/3)).toArray().value()
@@ -171,5 +173,17 @@ app.controller 'StatsCtrl', ($scope, Restangular) ->
   getColorFor = (ratio) ->
     if !ratio? then return "#FFFFFFFF"
     "##{$scope.rainbow.colourAt(ratio)}"
+
+  calculateSummary = (games) ->
+    all = _.chain(games).values().reduce(((sum, e) -> sum + e), 0).value()
+    _.chain(games).pairs().map( (pair) ->
+      [result, count] = pair
+      percentage = if count == 0 then 0 else count / all * 100
+      [result,
+        count: count
+        percentage: percentage.toFixed(2)
+        color: getColorFor(percentage)
+      ]
+    ).object().value()
 
   getGames = (matchup) -> _.chain(matchup).omit('first', 'second').values().reduce(((sum, e) -> sum + e), 0).value()

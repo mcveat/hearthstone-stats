@@ -2,12 +2,15 @@ package controllers
 
 import play.api.mvc._
 import play.modules.reactivemongo._
-import play.modules.reactivemongo.json.collection.JSONCollection
 import play.api.libs.json._
 import reactivemongo.bson.BSONObjectID
-import model.{GameResult, Game, Hero, GameResultRequest}
+import model._
 import model.JsonFormats._
-import scala.collection.immutable.HashMap
+import play.modules.reactivemongo.json.collection.JSONCollection
+import play.api.libs.json.JsObject
+import scala.Some
+import model.GameResultRequest
+import model.Game
 
 object Application extends Controller with MongoController {
   private def collection = db.collection[JSONCollection]("stats")
@@ -72,10 +75,13 @@ object Application extends Controller with MongoController {
   }
 
   def results(id: String) = Action {
-    type Stats = HashMap[Hero, HashMap[Hero, HashMap[GameResult, Long]]]
     Async {
       collection.find(oid(id)).one[JsObject].map { stats =>
-        Ok(stats.map(_ \ "ratios").getOrElse(Json.obj())).as("application/json")
+        val ratios = stats.map(_ \ "ratios").getOrElse(Json.obj())
+        val games = stats.map(_ \ "games").getOrElse(Json.arr()).as[List[Game]]
+        val counts = games.groupBy(_.result).mapValues(_.size).withDefaultValue(0)
+        val playerResults = PlayerResults(GamesCount(counts(GameWon), counts(GameDraw), counts(GameLost)), ratios)
+        Ok(Json.toJson(playerResults)).as("application/json")
       }
     }
   }

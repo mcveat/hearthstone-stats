@@ -3,6 +3,21 @@
 <script type="text/ng-template" id="stats.html">
     <div id="stats-wrapper">
         <div ng-init="init('@id')">
+            <table class="table table-condensed table-bordered overall-summary">
+                <tbody>
+                    <tr>
+                        <td ng-style="{'background-color': summary.won.color}">
+                            {{summary.won.count}} games won ({{summary.won.percentage}}%)
+                        </td>
+                        <td ng-style="{'background-color': summary.draw.color}">
+                            {{summary.draw.count}} games draw ({{summary.draw.percentage}}%)
+                        </td>
+                        <td ng-style="{'background-color': summary.lost.color}">
+                            {{summary.lost.count}} games lost ({{summary.lost.percentage}}%)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             <div class="row drawing-buttons well">
                 <div class="col-sm-4 col-sm-offset-4 center-content">
                     <div class="btn-group btn-group-justified">
